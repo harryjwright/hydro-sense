@@ -1,0 +1,34 @@
+[package]
+name = "hydro-sensor"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Do not change versions
+embedded-hal = "1.0.0-alpha.8" # Matched with l-e-h  0.4
+linux-embedded-hal = "0.4"     # HAL for Linux
+
+# SSD1306 requires the `eh1` feature for embedded-hal 1.0 support
+ssd1306 = { git = "https://github.com/rust-embedded-community/ssd1306.git", branch = "master", features = ["graphics"] }
+
+
+# display-interface = {
+#   version = "0.4",
+#   features = ["eh1"]
+# }
+
+# display-interface doesn't have an `eh1` feature
+display-interface = "0.4"
+embedded-graphics = "0.8"
+
+# Logging and utility crates
+env_logger = "0.11.5"
+log = "0.4.22"
+anyhow = "1.0"
+byteorder = "1.5.0"
+hidapi = "2.6.3"
+ctor = "0.2.8"
+colored = "2.1.0"
+crossterm = "0.29.0"
+
+[workspace]

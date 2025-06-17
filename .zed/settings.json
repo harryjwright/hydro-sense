@@ -1,0 +1,117 @@
+{
+  // === LSP (rust-analyzer) settings ===
+  "lsp": {
+    "rust-analyzer": {
+      "cargo": {
+        "loadOutDirsFromCheck": true,
+        "runBuildScripts": true,
+        "allFeatures": true,
+        "features": ["all"]
+      },
+      "checkOnSave": {
+        "command": "clippy",
+        "extraArgs": ["--", "-W", "clippy::all", "-W", "clippy::pedantic"]
+      },
+      "inlayHints": {
+        "enable": true,
+        "typeHints": true,
+        "parameterHints": true,
+        "chainingHints": true,
+        "maxLength": 26
+      },
+      "hoverActions": {
+        "enable": true
+      },
+      "lens": {
+        "enable": true
+      },
+      "completion": {
+        "postfix": {
+          "enable": true
+        }
+      },
+      "diagnostics": {
+        "enable": true,
+        "disabled": ["unresolved-proc-macro", "macro-error"],
+        "warningsAsHint": ["dead_code"],
+        "warningsAsInfo": ["clippy::pedantic"]
+      },
+      "server": {
+        "extraEnv": {
+          "RA_LOG": "error",
+          "RUST_BACKTRACE": "0"
+        },
+        "enableExperimental": false
+      },
+      "updates": {
+        "channel": "stable"
+      },
+      "procMacro": {
+        "server": "rust-analyzer-proc-macro-server"
+      },
+      "telemetry": {
+        "enable": false
+      }
+    }
+  },
+
+  // === Rust language settings ===
+  "languages": {
+    "rust": {
+      "formatter": "language_server",
+      "format_on_save": "language_server",
+      "remove_trailing_whitespace_on_save": true,
+      "ensure_final_newline_on_save": true,
+      "tab_size": 4
+    }
+  },
+
+  // === Editor general settings ===
+  "editor": {
+    "codeActionsOnSave": {
+      "source.organizeImports": true,
+      "source.fixAll": true
+    },
+    "formatOnSave": true,
+    "tabSize": 4,
+    "detectIndentation": false,
+    "trimTrailingWhitespace": true,
+    "insertFinalNewline": true
+  },
+
+  // === Files & workspace ===
+  "files": {
+    "excludeDirs": ["target", "node_modules"],
+    "watcherExclude": {
+      "**/target/**": true,
+      "**/node_modules/**": true
+    }
+  },
+
+  // === Terminal ===
+  "terminal": {
+    "defaultProfile": {
+      "linux": "bash"
+    }
+  },
+
+  // === Telemetry & updates ===
+  "telemetry": {
+    "enableTelemetry": false,
+    "enableCrashReporter": false,
+    "telemetryLevel": "off"
+  },
+  "rust-analyzer.telemetry.enable": false,
+  "update": {
+    "mode": "manual"
+  },
+  "extensions": {
+    "autoCheckUpdates": false,
+    "autoUpdate": false,
+    "ignoreRecommendations": true
+  },
+
+  // === Misc ===
+  "preferred_line_length": 80,
+  "soft_wrap": "preferred_line_length"
+}
