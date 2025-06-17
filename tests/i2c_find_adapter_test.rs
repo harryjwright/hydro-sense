@@ -3,7 +3,7 @@ mod common;
 use std::io::Result;
 
 // Import the function from your library crate; adjust the path as needed.
-use hydro_sensor::i2c::find_adapter;
+use hydro_sense::i2c::find_adapter;
 
 #[test]
 fn test_find_mcp2221_adapter() -> Result<()> {

@@ -1,5 +1,5 @@
 [package]
-name = "hydro-sensor"
+name = "hydro-sense"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,7 +9,9 @@ embedded-hal = "1.0.0-alpha.8" # Matched with l-e-h  0.4
 linux-embedded-hal = "0.4"     # HAL for Linux
 
 # SSD1306 requires the `eh1` feature for embedded-hal 1.0 support
-ssd1306 = { git = "https://github.com/rust-embedded-community/ssd1306.git", branch = "master", features = ["graphics"] }
+ssd1306 = { git = "https://github.com/rust-embedded-community/ssd1306.git", branch = "master", features = [
+    "graphics",
+] }
 
 
 # display-interface = {

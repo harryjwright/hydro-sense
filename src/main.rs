@@ -3,7 +3,7 @@
 #![allow(unused_variables)]
 
 use embedded_hal::i2c::I2c;
-use hydro_sensor::df0991::DFRobotRGBButton;
+use hydro_sense::df0991::*;
 use std::time::{Duration, Instant};
 
 // ┌──────────────────────────────────────────────────────────────┐
@@ -16,7 +16,10 @@ use std::time::{Duration, Instant};
 struct AppState {
     btn_press: bool,
     state_changed: bool,
+    last_change: Instant,
 }
+
+const DEBOUNCE_TIME: Duration = Duration::from_millis(50);
 
 // ┌──────────────────────────────────────────────────────────────┐
 // │                     Check Button Press                       │
@@ -35,8 +38,14 @@ where
     let current_pressed = button.get_button_status()?;
 
     if current_pressed != state.btn_press {
-        state.btn_press = current_pressed;
-        state.state_changed = true;
+        // Check how long since last change
+        let now = Instant::now();
+        if now.duration_since(state.last_change) >= DEBOUNCE_TIME {
+            state.btn_press = current_pressed;
+            state.state_changed = true;
+            state.last_change = now;
+        }
+        // else ignore change as it is bouncing
     }
 
     Ok(())
@@ -70,6 +79,12 @@ fn update_display(state: &AppState) -> anyhow::Result<()> {
 // │ 4. Sleep briefly to prevent excessive CPU usage.                 │
 // └──────────────────────────────────────────────────────────────────┘
 fn main() -> anyhow::Result<()> {
+    // Set default RUST_LOG to info if not set by user
+    if std::env::var("RUST_LOG").is_err() {
+        std::env::set_var("RUST_LOG", "info");
+    }
+    env_logger::init();
+
     // ┌──────────────────────────────────────────────────────────────┐
     // │                    Open I2C Device Adapter                   │
     // │                                                              │
@@ -77,7 +92,7 @@ fn main() -> anyhow::Result<()> {
     // │ If either step fails, the program will panic with an error.  │
     // └──────────────────────────────────────────────────────────────┘
     let device_name = "MCP2221";
-    let dev = hydro_sensor::i2c::find_adapter(device_name)?;
+    let dev = hydro_sense::i2c::find_adapter(device_name)?;
     let i2c = linux_embedded_hal::I2cdev::new(dev)?;
 
     // ┌──────────────────────────────────────────────────────────────┐
@@ -88,9 +103,9 @@ fn main() -> anyhow::Result<()> {
     // │ - Call `begin()` to verify presence and read part ID         │
     // │ - If detection fails, handle gracefully or exit early        │
     // └──────────────────────────────────────────────────────────────┘
-    let mut ph_cal_btn = hydro_sensor::df0991::DFRobotRGBButton::new(
+    let mut ph_cal_btn = hydro_sense::df0991::DFRobotRGBButton::new(
         i2c,
-        hydro_sensor::df0991::RGBBUTTON_DEFAULT_I2C_ADDR,
+        hydro_sense::df0991::RGBBUTTON_DEFAULT_I2C_ADDR,
     )?;
 
     if !ph_cal_btn.begin()? {
@@ -104,16 +119,32 @@ fn main() -> anyhow::Result<()> {
     // │ - Tracks dynamic runtime state like button press           │
     // │ - Includes a flag to indicate if a display redraw is needed│
     // └────────────────────────────────────────────────────────────┘
+    let initial_press = ph_cal_btn.get_button_status()?;
+    let now = Instant::now();
+
     let mut app_state = AppState {
-        btn_press: false,
-        state_changed: true, // Force initial draw
+        btn_press: initial_press,
+        state_changed: false,
+        last_change: now,
     };
 
+    // ┌──────────────────────────────────────────────────────────────┐
+    // │                           Main Loop                          │
+    // │                                                              │
+    // │ Continuously run the event loop:                             │
+    // │                                                              │
+    // │ 1. Check the button press and update the application state.  │
+    // │ 2. If the state changed, perform any actions such as         │
+    // │    updating the display or logging the event.                │
+    // │ 3. Reset the state_changed flag to avoid redundant updates.  │
+    // │ 4. Sleep briefly to reduce CPU usage and debounce input.     │
+    // └──────────────────────────────────────────────────────────────┘
     loop {
         check_press(&mut app_state, &mut ph_cal_btn)?;
 
         if app_state.state_changed {
-            update_display(&app_state)?;
+            // update_display(&app_state)?;
+            log::info!("Button pressed");
             app_state.state_changed = false;
         }
 

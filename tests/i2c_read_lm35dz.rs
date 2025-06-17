@@ -4,8 +4,8 @@
 
 mod common;
 
-use hydro_sensor::ads1115::{AdsSensor, Mux, Pga};
-use hydro_sensor::i2c::find_adapter;
+use hydro_sense::ads1115::{AdsSensor, Mux, Pga};
+use hydro_sense::i2c::find_adapter;
 use linux_embedded_hal::I2cdev;
 
 #[test]

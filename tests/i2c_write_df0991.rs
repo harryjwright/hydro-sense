@@ -1,6 +1,6 @@
 mod common;
 
-use hydro_sensor::{df0991::*, i2c::find_adapter};
+use hydro_sense::{df0991::*, i2c::find_adapter};
 use linux_embedded_hal::I2cdev;
 use std::thread;
 use std::time::Duration;

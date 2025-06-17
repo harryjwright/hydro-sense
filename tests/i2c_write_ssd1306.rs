@@ -2,7 +2,7 @@ mod common;
 
 use embedded_graphics::draw_target::DrawTarget;
 use embedded_graphics::pixelcolor::BinaryColor;
-use hydro_sensor::i2c::find_adapter;
+use hydro_sense::i2c::find_adapter;
 use linux_embedded_hal::I2cdev;
 use ssd1306::prelude::*;
 use ssd1306::rotation::DisplayRotation;
